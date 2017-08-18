@@ -1,3 +1,6 @@
+###############################################################
+### INSTALL OntologyIndex and   Annotation for HPO (TCGAome)###
+###############################################################
 install.packages(devtools)
 library(devtools)
 
@@ -7,3 +10,8 @@ biocLite(c('AnnotationDbi''biomaRt','cowplot','GOSemSim','omicade4','ontoCAT','o
 
 install_github("ggbiplot", "vqv")
 install_github('TCGAome', 'priesgo')
+
+biocLite('ontologyIndex')
+install.packages('Matrix')
+
+###############################################################
