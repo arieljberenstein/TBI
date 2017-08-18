@@ -1,3 +1,7 @@
+## from command line 
+# conda install -c r r-essentials
+
+
 ###############################################################
 ### INSTALL OntologyIndex and   Annotation for HPO (TCGAome)###
 ###############################################################
@@ -15,3 +19,9 @@ biocLite('ontologyIndex')
 install.packages('Matrix')
 
 ###############################################################
+#For jupyther kernel
+install.packages(c('repr', 'IRdisplay', 'evaluate', 'crayon', 'pbdZMQ', 'devtools', 'uuid', 'digest'))
+devtools::install_github('IRkernel/IRkernel')
+
+###############################################################
+
