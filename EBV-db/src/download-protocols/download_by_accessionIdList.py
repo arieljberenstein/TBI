@@ -19,7 +19,27 @@ outputpath = args.outputpath
 accession_ids = pd.read_csv(inputfile)
 
 
-def download_accIds_from_list(list_of_accession_ids,outputfile = './output.gb',address = "arieljberenstein@gmail.com"):
+def dump_accessionList(accList,outputpath,address = "arieljberenstein@gmail.com"):
+    Entrez.email =address
+    for genome_id in accList:
+        record = Entrez.efetch(db="nucleotide", id=genome_id, rettype="gb", retmode="text")
+        fasta = Entrez.efetch(db="nucleotide", id=genome_id, rettype="fasta", retmode="text")
+
+
+        filename = '{}genBankRecord_{}.gb'.format(outputpath,genome_id)
+        fastafile = '{}{}.fasta'.format(outputpath,genome_id)
+
+        print('Writing:{}'.format(genome_id))
+        
+        with open(filename, 'w') as f:
+            f.write(record.read())
+        with open(fastafile, 'w') as h:
+            h.write(fasta.read())
+    return None
+
+
+
+def download_accIds_from_list_oneFile(list_of_accession_ids,outputfile = './output.gb',address = "arieljberenstein@gmail.com"):
     Entrez.email =address
     genomeAccessions = list_of_accession_ids
 
@@ -36,9 +56,9 @@ def download_accIds_from_list(list_of_accession_ids,outputfile = './output.gb',a
 
 def main():
     IDs = accession_ids.iloc[:,0].tolist()
-    outputfile = outputpath + inputfile + '.gb'
-    download_accIds_from_list(IDs,outputfile = outputfile)
-    
+    #outputfile = outputpath + inputfile + '.gb'
+    #download_accIds_from_list(IDs,outputfile = outputfile)
+    dump_accessionList(IDs,outputpath = outputpath)
 
 if __name__ == "__main__":
     main()
