@@ -6,9 +6,6 @@ from Bio import SeqIO
 datapath = '/data/EBV/byACCIDs/'
 files = glob.glob(datapath + "*.gb") 
 
-#f = files[0]
-
-
 
 dfl =[]
 for k,f in enumerate(files):
@@ -22,3 +19,6 @@ seqLengths = pd.concat(dfl,axis = 1).transpose()
 seqLengths.set_index('AccId',inplace = True)
 
 seqLengths.to_csv(datapath+'seq_lengths.txt',sep=',',index = True)
+
+
+
