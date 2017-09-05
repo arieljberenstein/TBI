@@ -8,7 +8,7 @@ fbname=${fname%.*}   # remove extension
 
 # create output folder 
 mkdir /data/EBV/msas/$fbname/
-outpath = /data/EBV/msas/$fbname/
+outpath=/data/EBV/msas/$fbname/
 ## harcoded paths to outputfiles
 echo merging fasta files for group $fbname;
 input=/data/EBV/seqGroups/$fbname.txt
