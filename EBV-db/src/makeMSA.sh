@@ -1,5 +1,5 @@
 #!/bin/bash
-seqpath = '/data/EBV/byACCIDs/'
+seqpath='/data/EBV/byACCIDs/'
 for i in "$@";
 do
 fname=$(basename $i) # remove path
