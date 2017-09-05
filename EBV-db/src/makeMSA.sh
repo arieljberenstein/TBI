@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for i in {'AllseqsUnderto150k_withRef','test_secs'};
+for i in {'AllseqsUpto150k','test_secs'};
 do
 ## harcoded paths to outputfiles
 echo merging fasta files for group $i;
