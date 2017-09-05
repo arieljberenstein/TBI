@@ -20,7 +20,7 @@ echo runing msa-mafftfor group $fbname;
 sudo mafft --clustalout --thread 4 $outfa > $outclust;
 
 echo runing rate4site
-sudo rate4site -s $outclust -t $outclust -o $outpath$fbname_rate4site.res
+sudo rate4site -s $outclust -o $outpath$fbname_rate4site.res
 
 done
 
