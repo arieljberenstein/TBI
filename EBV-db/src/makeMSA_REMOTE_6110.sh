@@ -1,11 +1,6 @@
 #!/bin/bash
-<<<<<<< HEAD
-
-for i in {'AllseqsUpto150k','test_secs'};
-=======
 seqpath='/data/EBV/byACCIDs/'
 for i in "$@";
->>>>>>> 40eac5c8206b95ee365c75b30f218d4c66619716
 do
 fname=$(basename $i) # remove path
 fbname=${fname%.*}   # remove extension
