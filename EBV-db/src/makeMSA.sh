@@ -19,8 +19,8 @@ sudo python /home/ariel/repo/TBI/EBV-db/src/cat-fasta-files.py --idfile=$input -
 echo runing msa-mafftfor group $fbname;
 sudo mafft --clustalout --thread 4 $outfa > $outclust;
 
-echo runing rate4site
-sudo rate4site -s $outclust -o $outpath$fbname_rate4site.res
+#echo runing rate4site
+#sudo rate4site -s $outclust -o $outpath$fbname_rate4site.res
 
 done
 
