@@ -23,7 +23,6 @@ done
 echo $gap
 echo $file
 
-
 seqpath='/data/EBV/byACCIDs/'
 fname=$(basename $file) # remove path
 fbname=${fname%.*}   # remove extension
@@ -35,14 +34,18 @@ outpath=/data/EBV/msas/$fbname/
 
 ## harcoded paths to outputfiles
 echo merging fasta files for group $fbname;
-input=/data/EBV/seqGroups/$fbname.txt
+input=$file
+auxfa=$outpath'aux_'$fbname.fa;
 outfa=$outpath$fbname.fa;
 outmsa=$outpath$fbname'_msa_gap'$gap.fa;
 #echo $outclust
+echo $auxfa
 
-sudo python /home/ariel/repo/TBI/EBV-db/src/cat-fasta-files.py --idfile=$input --path=$seqpath --outputfile=$outfa;
+sudo python /home/ariel/repo/TBI/EBV-db/src/cat-fasta-files.py --idfile=$input --path=$seqpath --outputfile=$auxfa;
+cat $auxfa |tr 'N' '-' > $outfa
+sudo rm $auxfa 
+
 echo runing msa-mafftfor group $fbname;
-
 #sudo mafft --clustalout --thread 4 $outfa > $outclust;
 
 # this option is accurate but its take a lot of memmory and time. For only 6 full EBV sequences it take 30Gb of memory at the very begining! 
