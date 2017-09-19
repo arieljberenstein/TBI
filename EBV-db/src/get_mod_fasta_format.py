@@ -1,7 +1,8 @@
 import os 
 import pandas as pd
 import glob
-from Bio import AlignIO
+from Bio import AlignIO 
+from Bio import SeqIO
 import argparse
 
 parser = argparse.ArgumentParser(description='Given a msa in fasta file get a modified fasta file format acording to LDHat specifications')
