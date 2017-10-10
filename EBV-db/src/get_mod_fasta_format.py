@@ -13,7 +13,7 @@ args = parser.parse_args()
 msafile = args.msafile
 
 
-output_modified_fasta = msafile.strip('.fa')+'.modFasta'
+output_modified_fasta = msafile.split('.fa')[0]+'.modFasta'
 
 msa = AlignIO.read(msafile,'fasta')
 L = msa.get_alignment_length()
