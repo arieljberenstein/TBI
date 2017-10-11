@@ -51,7 +51,7 @@ echo $outmsa
 
 sudo python /home/ariel/repo/TBI/EBV-db/src/cat-fasta-files.py --idfile=$input --path=$seqpath --outputfile=$auxfa;
 cat $auxfa |tr 'N' '-' > $outfa
-sed -i -e 's/\-C\_007605/NC_007605/g' $outfa
+sed -i -e 's/\-C\_00/NC_00/g' $outfa
 
 sudo rm $auxfa 
 #sudo rm $auxfa1
