@@ -43,7 +43,7 @@ else:
 
 ### run mapping original msa 2 reference 
 msa_2_ref = msa + '_to_ref_%s.csv'%refgenome
-os.system(' python ~/repo/TBI/EBV-db/src/ref2msa_mapper.py -m %s -r %s -o %s'%(msa,refseq,msa_2_ref))
+os.system(' python /home/ariel/repo/TBI/EBV-db/src/ref2msa_mapper.py -m %s -r %s -o %s'%(msa,refseq,msa_2_ref))
 mapp_to_reference = pd.read_csv(msa_2_ref,sep = '|')
 
 
