@@ -119,7 +119,7 @@ os.system('vcf2tsv %s > %s'%(flagedfile,outfile))
 
 print 'Saving into xls file'
 if xls: 
-    os.system('ssconvert --merge-to %s.xls %s %s'%(prefix,outfile,ifile))
+    os.system('ssconvert --merge-to %s.xls %s %s'%(prefix,outfile,infofile))
 
 
 # In[ ]:
