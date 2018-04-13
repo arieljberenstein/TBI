@@ -1,9 +1,4 @@
-
-# coding: utf-8
-
-# In[110]:
-
-
+#!/usr/bin/python
 from pyensembl import EnsemblRelease as ensbl
 import pandas as pd
 import numpy as np
@@ -11,10 +6,7 @@ import argparse
 import os
 
 
-# ## Utility functions
-
-# In[119]:
-
+## Utility Functions
 
 def parseArgs(description = 'Get coverage at different DPs for a given list of genes.'):
     parser = argparse.ArgumentParser(description= description)
@@ -106,7 +98,7 @@ def get_locis(genelist,ref,outpath,write_bedfile = True):
             analyzed_genes.append(gen)
         except:
             print 'warning, gen %s was not found and ignored'%gen
-#    return pd.concat(locis)
+
     print '\n'
     ggenes = analyzed_genes
     locis = pd.DataFrame(locis)
@@ -125,18 +117,18 @@ def get_locis(genelist,ref,outpath,write_bedfile = True):
 
 def run_samtools_view(bamfile,bedfile,split=False):
     base = os.path.basename(bamfile).split('.bam')[0]
-    #print base
+    
     outbam = outpath + base + '_reduced.bam'
     if not split:
         bedfile = bedfile
         call1 = 'samtools view -bh -L %s %s > %s'%(bedfile,bamfile,outbam)
-        #print call1
+        
     status = os.system(call1)    
     if status ==0:
         print 'ok samtools'
     else:
         print 'samtools have failed'
-        #quit()
+        
 
     # get index
     call2 = 'samtools index %s'%(outbam)
@@ -145,7 +137,7 @@ def run_samtools_view(bamfile,bedfile,split=False):
         print 'ok index'
     else:
         print 'index have failed'
-        #quit()
+        
 
     return  outbam
     
@@ -180,7 +172,7 @@ def run_bedtools_coverage(bam,bed,outpath):
     os.system(call2)
     
     bypos = pd.read_csv(file_by_position,sep = '\t',header = None)
-    #print bypos.head()
+    
     grouping = bypos.groupby([3])[7].apply(lambda x: serie_counting(x))
     
     res  = grouping.unstack(); 
@@ -205,10 +197,7 @@ def run_bedtools_coverage(bam,bed,outpath):
     return outcoveragefile
 
 
-# In[118]:
-
-
-#bamfile, vcffile, outpath, prefix, ref, genelistfile, split = parseArgs()    
+## for testing mode
 if(False):
     ref, genelistfile, bamfile, outpath, split = test_mode()
 
@@ -226,8 +215,6 @@ if(False):
     
 
 
-# In[ ]:
-
 
 if __name__ == "__main__":
     #parse arguments
@@ -243,15 +230,4 @@ if __name__ == "__main__":
 
     #compute coverage by gen along the bamfile
     coverage_file = run_bedtools_coverage(reduced_bamfile,bedfile,outpath)
-
-
-
-# In[42]:
-
-
-#%matplotlib inline
-#from matplotlib import pyplot as plt
-#histogr = pd.read_csv('./byposition.txt',sep = '\t',header = None)
-#plt.scatter(histogr[6],histogr[7])
-#plt.scatter()
 
