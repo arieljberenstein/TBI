@@ -1,4 +1,5 @@
 #!/usr/bin/python
+
 from pyensembl import EnsemblRelease as ensbl
 import pandas as pd
 import numpy as np
@@ -6,7 +7,7 @@ import argparse
 import os
 
 
-## Utility Functions
+# ## Utility functions
 
 def parseArgs(description = 'Get coverage at different DPs for a given list of genes.'):
     parser = argparse.ArgumentParser(description= description)
@@ -117,18 +118,16 @@ def get_locis(genelist,ref,outpath,write_bedfile = True):
 
 def run_samtools_view(bamfile,bedfile,split=False):
     base = os.path.basename(bamfile).split('.bam')[0]
-    
     outbam = outpath + base + '_reduced.bam'
     if not split:
         bedfile = bedfile
         call1 = 'samtools view -bh -L %s %s > %s'%(bedfile,bamfile,outbam)
-        
     status = os.system(call1)    
     if status ==0:
         print 'ok samtools'
     else:
         print 'samtools have failed'
-        
+        #quit()
 
     # get index
     call2 = 'samtools index %s'%(outbam)
@@ -137,21 +136,21 @@ def run_samtools_view(bamfile,bedfile,split=False):
         print 'ok index'
     else:
         print 'index have failed'
-        
+        #quit()
 
     return  outbam
     
-#def clean_files(): 
-#    rm 
 
 def serie_counting(x):
     return pd.Series({'bp_at_10dp':(x>10).sum(),'bp_at_20dp':(x>20).sum(),'bp_at_30dp':(x>30).sum()})
 
-def run_bedtools_coverage(bam,bed,outpath):
-    outcoveragefile = outpath + 'coverage_by_gen.tsv'
+def run_bedtools_coverage(bam,bed,outpath,exonbed = False):
+    
+    outcoveragefile = outpath +os.path.basename(bed)+'.tsv'
+    exon_file_report= outpath +os.path.basename(bed)+'_exon_report'+'.tsv'
+    print outcoveragefile
     call = 'coverageBed -a %s -b %s > %s'%(bed,bam,outcoveragefile)
     status = os.system(call)
-    #print call
     if status ==0:
         print 'ok coveragedBed'
     else:
@@ -159,7 +158,7 @@ def run_bedtools_coverage(bam,bed,outpath):
 
     results = pd.read_table(outcoveragefile,header = None)
     results.columns = ['chr','start','end','name','score','strand','matched_reads','coverage_dp1','len_gen_bp','rel_coverage_dp1']
-    
+        
     
     ### the later approach give us the coverage as the 
     #number of read bases at least ONE time over the total length of our gene of interest
@@ -172,7 +171,7 @@ def run_bedtools_coverage(bam,bed,outpath):
     os.system(call2)
     
     bypos = pd.read_csv(file_by_position,sep = '\t',header = None)
-    
+
     grouping = bypos.groupby([3])[7].apply(lambda x: serie_counting(x))
     
     res  = grouping.unstack(); 
@@ -188,46 +187,96 @@ def run_bedtools_coverage(bam,bed,outpath):
     ### relativise results
     abscols = ['bp_at_10dp','bp_at_20dp','bp_at_30dp']
 
-    relatives = np.round((coverage[abscols].transpose() /coverage['len_gen_bp'].values).transpose(),7)
-    coverage[abscols] = relatives
+    
+    if not exonbed:
+        relatives = np.round((coverage[abscols].transpose() /coverage['len_gen_bp'].values).transpose(),7)
+        coverage[abscols] = relatives
     coverage.to_csv(outcoveragefile,index = False, sep = '\t')
+
+    if exonbed:    
+        exome_report = coverage.groupby(['score'])[['coverage_dp1','len_gen_bp','bp_at_10dp','bp_at_20dp','bp_at_30dp']].sum()
+        rel = exome_report.apply(lambda x:x/float(x['len_gen_bp']),axis = 1).drop([u'len_gen_bp'],axis = 1)
+        exon_coverage = exome_report[['len_gen_bp']].join(rel)
+        exon_coverage.reset_index(inplace = True)
+        exon_coverage.rename(columns = {'score':'name'},inplace = True)
+        exon_coverage.to_csv(exon_file_report,index =False , sep = '\t')
 
     
     
     return outcoveragefile
 
 
-## for testing mode
-if(False):
-    ref, genelistfile, bamfile, outpath, split = test_mode()
+def get_exons(genelist,ref,outpath,write_bedfile = True):
+    analyzed_genes = []
+    try:
+        if (ref == 37)|(ref == 19):
+            ensemble_version = 75
+    except:
+        'You must to install the ensemble version 75, please run \n'        
+        'pyensembl install --release 75 --species homo_sapiens \n'
+    try:
+        if ref == 38:
+            ensemble_version = 87
+    except:
+        'You must to install latest ensemble version (87), please run \n'        
+        'pyensembl install --release 87 --species homo_sapiens \n'
+        
+    data = ensbl(ensemble_version)
+    ############ By Exons #############
+    exonbed = []
+    for gene in genelist:
+        try:
+            exons = data.exon_ids_of_gene_name(gene)
+            exonLocus = [data.locus_of_exon_id(e) for e in exons]
+            exonLoci = [ex.to_dict() for ex in exonLocus]
+            exonLoci = pd.DataFrame(exonLoci)
+            exonLoci['name'] = exons
+            exonLoci['score'] = [gene]*len(exons)
+            exonLoci.rename(columns = {'contig':'chrom'},inplace = True)
+            #exonLoci['score'] = 0 ## this is only for completness, in order to recognize strand as the right next field
+            exonLoci = exonLoci[['chrom','start','end','name','score','strand']]
+            exonbed.append(exonLoci)
+            analyzed_genes.append(gene)
+        except:
+            print 'warning, gene %s was not found and ignored'%gene
 
+    print '\n'
+    exonbed = pd.concat(exonbed)
+    
+    # write file
+    exonbedfile = outpath+'exons_loci.bed'
+
+    if write_bedfile:
+        exonbed.to_csv(exonbedfile,sep = '\t',index = False,header = None)
+    
+        
+    return exonbed, exonbedfile, exonbed.columns
+
+def main(test = True):
+    if test:
+        ref, genelistfile, bamfile, outpath, split = test_mode()
+    else:
+        bamfile, vcffile, outpath, prefix, ref, genelistfile, split = parseArgs()
     #check params
     check_ref(ref=ref,outpath = outpath)
 
     genelist = get_genelist(genelistfile)
     gene_loci , bedfile , locicolumns = get_locis(genelist,ref = ref,outpath=outpath)
-        
-    reduced_bamfile = run_samtools_view(bamfile,bedfile,split=split)
+    exon_loci , exon_bedfile , exon_columns = get_exons(genelist,ref = ref,outpath=outpath)
 
+    
+    reduced_bamfile = run_samtools_view(bamfile,bedfile,split=split)
+    
     #compute coverage by gen along the bamfile
     coverage_file = run_bedtools_coverage(reduced_bamfile,bedfile,outpath)
+    coverage_by_exon = run_bedtools_coverage(reduced_bamfile,exon_bedfile,outpath,exonbed= True)
     
+    
+    exome_coverage = pd.read_table(coverage_by_exon)
     
 
 
 
 if __name__ == "__main__":
-    #parse arguments
-    bamfile, vcffile, outpath, prefix, ref, genelistfile, split = parseArgs()    
-
-    #check params
-    check_ref(ref=ref,outpath = outpath)
-
-    genelist = get_genelist(genelistfile)
-    gene_loci , bedfile , locicolumns = get_locis(genelist,ref = ref,outpath=outpath)
-        
-    reduced_bamfile = run_samtools_view(bamfile,bedfile,split=split)
-
-    #compute coverage by gen along the bamfile
-    coverage_file = run_bedtools_coverage(reduced_bamfile,bedfile,outpath)
+    main()
 
