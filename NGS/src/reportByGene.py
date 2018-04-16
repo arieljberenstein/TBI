@@ -252,7 +252,7 @@ def get_exons(genelist,ref,outpath,write_bedfile = True):
         
     return exonbed, exonbedfile, exonbed.columns
 
-def main(test = True):
+def main(test = False):
     if test:
         ref, genelistfile, bamfile, outpath, split = test_mode()
     else:
