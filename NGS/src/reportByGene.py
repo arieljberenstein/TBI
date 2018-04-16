@@ -116,7 +116,7 @@ def get_locis(genelist,ref,outpath,write_bedfile = True):
     return locis, bedfile, locis.columns
 
 
-def run_samtools_view(bamfile,bedfile,split=False):
+def run_samtools_view(bamfile,bedfile,outpath,split=False):
     base = os.path.basename(bamfile).split('.bam')[0]
     outbam = outpath + base + '_reduced.bam'
     if not split:
@@ -265,7 +265,7 @@ def main(test = False):
     exon_loci , exon_bedfile , exon_columns = get_exons(genelist,ref = ref,outpath=outpath)
 
     
-    reduced_bamfile = run_samtools_view(bamfile,bedfile,split=split)
+    reduced_bamfile = run_samtools_view(bamfile,bedfile,split=split,outpath = outpath)
     
     #compute coverage by gen along the bamfile
     coverage_file = run_bedtools_coverage(reduced_bamfile,bedfile,outpath)
