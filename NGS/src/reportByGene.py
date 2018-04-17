@@ -84,7 +84,7 @@ def test_mode():
     return(ref,genelistfile,bamfile,outpath,split)
     
     
-def get_locis(genelist,ref,outpath,write_bedfile = True):
+def get_locis(genelist,ref,outpath,entrez = False,write_bedfile = True):
     analyzed_genes = []
     try:
         if (ref == 37)|(ref == 19):
@@ -103,7 +103,7 @@ def get_locis(genelist,ref,outpath,write_bedfile = True):
     locis = []
     mg = mygene.MyGeneInfo()
     
-    if Entrez == False:    
+    if entrez == False:    
         for gen in genelist:
             gene = gen.strip(' ').replace('-', '')
             try:
@@ -140,7 +140,7 @@ def get_locis(genelist,ref,outpath,write_bedfile = True):
                 locis.append(loc[0].to_dict())
                 analyzed_genes.append(gene)
 
-    if Entrez == True:
+    if entrez == True:
         for gene in genelist:
             try:
                 ensblID = mg.getgene(gene, fields='ensembl',species = 'human')[u'ensembl'] [u'gene']
@@ -259,7 +259,7 @@ def run_bedtools_coverage(bam,bed,outpath,exonbed = False):
     return outcoveragefile
 
 
-def get_exons(genelist,ref,outpath,write_bedfile = True):
+def get_exons(genelist,ref,outpath,entrez = False, write_bedfile = True):
     analyzed_genes = []
     try:
         if (ref == 37)|(ref == 19):
@@ -279,7 +279,7 @@ def get_exons(genelist,ref,outpath,write_bedfile = True):
     exonbed = []
     mg = mygene.MyGeneInfo()
 
-    if Entrez == False:
+    if entrez == False:
         for gen in genelist:
             gene = gen.strip(' ').replace('-', '')
             try:
@@ -332,7 +332,7 @@ def get_exons(genelist,ref,outpath,write_bedfile = True):
                 exonbed.append(exonLoci)
                 analyzed_genes.append(gene)
 
-    if Entrez == True:
+    if entrez == True:
         for gene in genelist:
             try:
                 ensblID = mg.getgene(gene, fields='ensembl',species = 'human')[u'ensembl'] [u'gene']                
@@ -372,9 +372,9 @@ def main(test = False):
     #check params
     check_ref(ref=ref,outpath = outpath)
 
-    genelist = get_genelist(genelistfile,entrez)
-    gene_loci , bedfile , locicolumns = get_locis(genelist,ref = ref,outpath=outpath)
-    exon_loci , exon_bedfile , exon_columns = get_exons(genelist,ref = ref,outpath=outpath)
+    genelist = get_genelist(genelistfile,entrez=entrez)
+    gene_loci , bedfile , locicolumns = get_locis(genelist,ref = ref,outpath=outpath,entrez=entrez)
+    exon_loci , exon_bedfile , exon_columns = get_exons(genelist,ref = ref,outpath=outpath,entrez = entrez)
 
     
     reduced_bamfile = run_samtools_view(bamfile,bedfile,split=split,outpath = outpath)
