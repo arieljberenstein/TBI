@@ -93,13 +93,13 @@ def get_locis(genelist,ref,outpath,write_bedfile = True):
     locis = []
 
     for gen in genelist:
-        gen = gen.strip(' ').strip('-')
+        gene = gen.strip(' ').strip('-')
         try:
-            loc =  data.loci_of_gene_names(gen)
+            loc =  data.loci_of_gene_names(gene)
             locis.append(loc[0].to_dict())
-            analyzed_genes.append(gen)
+            analyzed_genes.append(gene)
         except ValueError:
-            print 'warning, gen %s was not found and ignored'%gen
+            print 'warning, gen %s was not found and ignored'%gene
 
     print '\n'
     ggenes = analyzed_genes
