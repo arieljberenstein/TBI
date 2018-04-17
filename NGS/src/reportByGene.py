@@ -372,7 +372,7 @@ def main(test = False):
     #check params
     check_ref(ref=ref,outpath = outpath)
 
-    genelist = get_genelist(genelistfile)
+    genelist = get_genelist(genelistfile,entrez)
     gene_loci , bedfile , locicolumns = get_locis(genelist,ref = ref,outpath=outpath)
     exon_loci , exon_bedfile , exon_columns = get_exons(genelist,ref = ref,outpath=outpath)
 
