@@ -21,7 +21,7 @@ def parseArgs(description = 'Get coverage at different DPs for a given list of g
     parser.add_argument('-s','--splitBamFile', dest='split', action='store_false',help = 'in next iterations this flag will allow to split the reducedBAM file by chromosomes')
     parser.add_argument('-e','--entrez', dest='entrez', action='store_false',help = 'use entrez ids')
     parser.set_defaults(split=False)
-    parser.set_defaults(entrez=True)
+    parser.set_defaults(entrez=False)
 
     args = parser.parse_args()
     # MANDATORY ARGUMENTS
@@ -36,7 +36,7 @@ def parseArgs(description = 'Get coverage at different DPs for a given list of g
     split= args.split
     entrez= args.entrez
     
-    return bamfile, vcffile, outpath, prefix, ref, genelistfile, split
+    return bamfile, vcffile, outpath, prefix, ref, genelistfile, split, entrez
     
     
     
@@ -368,7 +368,7 @@ def main(test = False):
     if test:
         ref, genelistfile, bamfile, outpath, split = test_mode()
     else:
-        bamfile, vcffile, outpath, prefix, ref, genelistfile, split = parseArgs()
+        bamfile, vcffile, outpath, prefix, ref, genelistfile, split, entrez = parseArgs()
     #check params
     check_ref(ref=ref,outpath = outpath)
 
