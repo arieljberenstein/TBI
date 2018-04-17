@@ -93,6 +93,7 @@ def get_locis(genelist,ref,outpath,write_bedfile = True):
     locis = []
 
     for gen in genelist:
+        gen = gen.strip(' ').strip('-')
         try:
             loc =  data.loci_of_gene_names(gen)
             locis.append(loc[0].to_dict())
