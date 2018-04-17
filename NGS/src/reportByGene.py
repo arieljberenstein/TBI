@@ -225,7 +225,8 @@ def get_exons(genelist,ref,outpath,write_bedfile = True):
     data = ensbl(ensemble_version)
     ############ By Exons #############
     exonbed = []
-    for gene in genelist:
+    for gen in genelist:
+        gene = gene.strip(' ').strip('-')
         try:
             exons = data.exon_ids_of_gene_name(gene)
             exonLocus = [data.locus_of_exon_id(e) for e in exons]
