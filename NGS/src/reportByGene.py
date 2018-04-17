@@ -97,7 +97,7 @@ def get_locis(genelist,ref,outpath,write_bedfile = True):
             loc =  data.loci_of_gene_names(gen)
             locis.append(loc[0].to_dict())
             analyzed_genes.append(gen)
-        except:
+        except ValueError:
             print 'warning, gen %s was not found and ignored'%gen
 
     print '\n'
