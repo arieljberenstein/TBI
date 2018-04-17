@@ -19,7 +19,7 @@ def parseArgs(description = 'Get coverage at different DPs for a given list of g
     parser.add_argument('-v','--vcffile',default = '',required=False,help='input vcf file to be usde for complementary analysis', )
     parser.add_argument('-p','--prefix',dest = 'prefix',default = '',required = False)
     parser.add_argument('-s','--splitBamFile', dest='split', action='store_false',help = 'in next iterations this flag will allow to split the reducedBAM file by chromosomes')
-    parser.add_argument('-e','--entrez', dest='entrez', action='store_false',help = 'use entrez ids')
+    parser.add_argument('-e','--entrez', dest='entrez', action='store_true',help = 'use entrez ids')
     parser.set_defaults(split=False)
     parser.set_defaults(entrez=False)
 
