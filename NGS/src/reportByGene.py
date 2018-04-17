@@ -147,7 +147,7 @@ def get_locis(genelist,ref,outpath,entrez = False,write_bedfile = True):
                 loc =  data.locus_of_gene_id(ensblID)
                 locis.append(loc[0].to_dict())
                 analyzed_genes.append(gene)
-            except ValueError:
+            except:
                 print 'warning, gene %s was not found and ignored'%gene 
                 continue
                 
