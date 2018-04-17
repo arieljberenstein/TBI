@@ -226,7 +226,7 @@ def get_exons(genelist,ref,outpath,write_bedfile = True):
     ############ By Exons #############
     exonbed = []
     for gen in genelist:
-        gene = gene.strip(' ').strip('-')
+        gene = gen.strip(' ').strip('-')
         try:
             exons = data.exon_ids_of_gene_name(gene)
             exonLocus = [data.locus_of_exon_id(e) for e in exons]
