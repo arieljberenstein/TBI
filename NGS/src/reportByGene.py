@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import argparse
 import os
+import mygene
 
 
 # ## Utility functions
@@ -91,16 +92,29 @@ def get_locis(genelist,ref,outpath,write_bedfile = True):
         
     data = ensbl(ensemble_version)
     locis = []
-
+    mg = mygene.MyGeneInfo()
     for gen in genelist:
-        gene = gen.strip(' ').strip('-')
+        gene = gen.strip(' ').replace('-', '')
         try:
             loc =  data.loci_of_gene_names(gene)
             locis.append(loc[0].to_dict())
             analyzed_genes.append(gene)
         except ValueError:
-            print 'warning, gen %s was not found and ignored'%gene
-
+            gene_query = mg.query(gene, size=5,species = 'human')
+            gids = gene_query['hits']
+            print  gids
+            if(len(gids)==0):
+                print 'warning, gene %s was not found and ignored'%gene 
+                continue
+            else:
+                gid = int(gids[0][u'_id'])
+                if len(gids)>1:
+                    print 'warning: more than one mathch with %s'%gene
+                    print 'gen id: %s was assumed'%gid
+            loc =  data.locus_of_gene_id(gid)
+            locis.append(loc[0].to_dict())
+            analyzed_genes.append(gene)
+    
     print '\n'
     ggenes = analyzed_genes
     locis = pd.DataFrame(locis)
@@ -225,8 +239,9 @@ def get_exons(genelist,ref,outpath,write_bedfile = True):
     data = ensbl(ensemble_version)
     ############ By Exons #############
     exonbed = []
+    mg = mygene.MyGeneInfo()
     for gen in genelist:
-        gene = gen.strip(' ').strip('-')
+        gene = gen.strip(' ').replace('-', '')
         try:
             exons = data.exon_ids_of_gene_name(gene)
             exonLocus = [data.locus_of_exon_id(e) for e in exons]
@@ -239,8 +254,31 @@ def get_exons(genelist,ref,outpath,write_bedfile = True):
             exonLoci = exonLoci[['chrom','start','end','name','score','strand']]
             exonbed.append(exonLoci)
             analyzed_genes.append(gene)
-        except:
-            print 'warning, gene %s was not found and ignored'%gene
+        except ValueError:
+            gene_query = mg.query(gene, size=5,species = 'human')
+            gids = gene_query['hits']
+            print  gids
+            if(len(gids)==0):
+                print 'warning, gene %s was not found and ignored'%gene 
+                continue
+            else:
+                gid = int(gids[0][u'_id'])
+                if len(gids)>1:
+                    print 'warning: more than one mathch with %s'%gene
+                    print 'gen id: %s was assumed'%gid
+            exons = data.exon_ids_of_gene_id(gid)
+            exonLocus = [data.locus_of_exon_id(e) for e in exons]
+            exonLoci = [ex.to_dict() for ex in exonLocus]
+            exonLoci = pd.DataFrame(exonLoci)
+            exonLoci['name'] = exons
+            exonLoci['score'] = [gene]*len(exons)
+            exonLoci.rename(columns = {'contig':'chrom'},inplace = True)
+            #exonLoci['score'] = 0 ## this is only for completness, in order to recognize strand as the right next field
+            exonLoci = exonLoci[['chrom','start','end','name','score','strand']]
+            exonbed.append(exonLoci)
+            analyzed_genes.append(gene)
+            
+            
 
     print '\n'
     exonbed = pd.concat(exonbed)
