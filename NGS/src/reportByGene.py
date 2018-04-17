@@ -107,7 +107,21 @@ def get_locis(genelist,ref,outpath,write_bedfile = True):
                 print 'warning, gene %s was not found and ignored'%gene 
                 continue
             else:
-                gid = int(gids[0][u'_id'])
+                j=0
+                for i in range(len(gids)): 
+                    gid = int(gids[i][u'_id'])
+                    try:
+                        trylocus = data.locus_of_gene_id(gid)
+                        break
+                    except ValueError:
+                        j=j+1
+                        continue
+
+                # check if there was a match 
+                if i == j:
+                    print 'warning, gene %s was not found and ignored'%gene 
+                    continue
+                    
                 if len(gids)>1:
                     print 'warning: more than one mathch with %s'%gene
                     print 'gen id: %s was assumed'%gid
@@ -262,7 +276,21 @@ def get_exons(genelist,ref,outpath,write_bedfile = True):
                 print 'warning, gene %s was not found and ignored'%gene 
                 continue
             else:
-                gid = int(gids[0][u'_id'])
+                j=0
+                for i in range(len(gids)): 
+                    gid = int(gids[i][u'_id'])
+                    try:
+                        trylocus = data.locus_of_gene_id(gid)
+                        break
+                    except ValueError:
+                        j=j+1
+                        continue
+
+                # check if there was a match 
+                if i == j:
+                    print 'warning, gene %s was not found and ignored'%gene 
+                    continue
+                
                 if len(gids)>1:
                     print 'warning: more than one mathch with %s'%gene
                     print 'gen id: %s was assumed'%gid
