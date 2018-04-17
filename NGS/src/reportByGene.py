@@ -111,7 +111,8 @@ def get_locis(genelist,ref,outpath,write_bedfile = True):
                 for i in range(len(gids)): 
                     gid = int(gids[i][u'_id'])
                     try:
-                        trylocus = data.locus_of_gene_id(gid)
+                        ensblID = mg.getgene(gid, fields='ensembl',species = 'human')[u'ensembl'] [u'gene']
+                        trylocus = data.locus_of_gene_id(ensblID)
                         break
                     except ValueError:
                         j=j+1
@@ -124,8 +125,8 @@ def get_locis(genelist,ref,outpath,write_bedfile = True):
                     
                 if len(gids)>1:
                     print 'warning: more than one mathch with %s'%gene
-                    print 'gen id: %s was assumed'%gid
-            loc =  data.locus_of_gene_id(gid)
+                    print 'gen id: %s (ensmbl id %s ) was assumed'%(gid,ensblID)
+            loc =  data.locus_of_gene_id(ensblID)
             locis.append(loc[0].to_dict())
             analyzed_genes.append(gene)
     
@@ -280,7 +281,8 @@ def get_exons(genelist,ref,outpath,write_bedfile = True):
                 for i in range(len(gids)): 
                     gid = int(gids[i][u'_id'])
                     try:
-                        trylocus = data.locus_of_gene_id(gid)
+                        ensblID = mg.getgene(gid, fields='ensembl',species = 'human')[u'ensembl'] [u'gene']
+                        trylocus = data.locus_of_gene_id(ensblID)
                         break
                     except ValueError:
                         j=j+1
@@ -290,11 +292,11 @@ def get_exons(genelist,ref,outpath,write_bedfile = True):
                 if i == j:
                     print 'warning, gene %s was not found and ignored'%gene 
                     continue
-                
+                    
                 if len(gids)>1:
                     print 'warning: more than one mathch with %s'%gene
-                    print 'gen id: %s was assumed'%gid
-            exons = data.exon_ids_of_gene_id(gid)
+                    print 'gen id: %s (ensmbl id %s ) was assumed'%(gid,ensblID)
+            exons = data.exon_ids_of_gene_id(ensblID)
             exonLocus = [data.locus_of_exon_id(e) for e in exons]
             exonLoci = [ex.to_dict() for ex in exonLocus]
             exonLoci = pd.DataFrame(exonLoci)
