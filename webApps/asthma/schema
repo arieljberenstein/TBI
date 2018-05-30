@@ -1,0 +1,203 @@
+###### Proposed schema for asthma db ######
+
+##############################################
+CREATE TABLE "pacientes" (
+ "empadronamiento" TEXT NOT NULL,
+ "nombre" TEXT,
+ "apellido" TEXT,
+ "dni" INTEGER,
+ "sexo" TEXT
+ PRIMARY KEY (empadronamiento)
+);
+
+
+CREATE TABLE "demografico" (
+"empadronamiento" TEXT NOT NULL,
+ "localidad" TEXT,
+ "provincia" TEXT,
+ "pais" TEXT,
+ "fechaPrimeraVisita" TEXT,
+ "peso" REAL,
+ "talla" REAL,"Empadronamiento" TEXT NOT NULL,
+ "fechaNacimiento" TEXT,
+ PRIMARY KEY (empadronamiento)
+);
+
+##############################################
+
+CREATE TABLE "consultas" (
+"empadronamiento" TEXT NOT NULL,
+"numeroVisita" INTEGER NOT NULL
+"sintomaID" INTEGER,
+"estudioID" INTEGER,    
+"tratamientoID" INTEGER,  
+"comorbilidad INTEGER",
+
+"codeSintomaLastMonth" INTEGER,
+"indicacionesID" INTEGER,
+"nivelEstimadoGina" INTEGER,
+"laboratorioID" INTEGER
+
+PRIMARY KEY (empadronamiento,numeroVisita)
+);
+
+
+CREATE TABLE "antecedentes" (
+"empadronamiento" TEXT NOT NULL,
+"fechaComienzoSintomasRespiratorios" TEXT
+"sintomaID" INTEGER,
+"estudioID" INTEGER,    
+"tratamientoID" INTEGER,  
+"comorbilidad INTEGER",
+"code_familia INTEGER",  
+PRIMARY KEY (empadronamiento)
+);
+
+CREATE TABLE "sintomas" (
+"sintomaID" INTEGER NOT NULL,
+"empadronamiento" TEXT NOT NULL,
+"numeroVisita" INTEGER NOT NULL,
+"codeSintoma" INTEGER NOT NULL,
+"fechaInicioSintoma" TEXT,
+"fechaFinSintoma" TEXT,
+"observacion" TEXT,
+PRIMARY KEY (sintomaID,empadronamiento,numeroVisita,codeSintoma)
+)
+
+CREATE TABLE "code_sintomas" (
+"codeSintoma" INTEGER, 
+"nombreSintoma" TEXT, 
+PRIMARY KEY (codeSintoma)
+);
+
+CREATE TABLE "code_sintomaLastMonth" (
+"codeSintomaLastMonth" INTEGER, 
+"nombreSintoma" TEXT, 
+PRIMARY KEY (codeSintomaLastMonth)
+);
+
+CREATE TABLE "estudios" (
+"estudioID" INTEGER NOT NULL,
+"empadronamiento" TEXT NOT NULL,
+"numeroVisita" INTEGER NOT NULL,
+"codeEstudio" INTEGER NOT NULL,
+"fechaEstudio" TEXT,
+"referenciaResultado" REAL,
+"resultado" REAL,
+"observacion" TEXT,
+PRIMARY KEY (estudioID,empadronamiento,numeroVisita,codeEstudio)
+)
+
+CREATE TABLE "code_estudios" (
+"codeEstudio" INTEGER, 
+"nombreEstudio" TEXT, 
+PRIMARY KEY (codeEstudio)
+);
+
+
+CREATE TABLE "laboratorio" (
+"laboratorioID" INTEGER NOT NULL,
+"empadronamiento" TEXT NOT NULL,
+"numeroVisita" INTEGER NOT NULL,
+"codeLaboratorio" INTEGER NOT NULL,
+"fechaLaboratorio" TEXT,
+"referenciaResultado" REAL,
+"resultado" REAL,
+"observacion" TEXT,
+PRIMARY KEY (estudioID,empadronamiento,numeroVisita,codeEstudio)
+)
+
+CREATE TABLE "code_estudios" (
+"codeEstudio" INTEGER, 
+"nombreEstudio" TEXT, 
+PRIMARY KEY (codeEstudio)
+);
+
+
+
+CREATE TABLE "tratamientos" (
+"tratamientoID" INTEGER NOT NULL,
+"empadronamiento" TEXT NOT NULL,
+"numeroVisita" INTEGER NOT NULL,
+"codeTratamiento" INTEGER NOT NULL,
+"fechaIncioTratamiento" TEXT,
+"fechaFinTratamiento" TEXT,
+"dosis" INTEGER,
+"frecuencia" INTEGER,
+"efectoAdversoID" INTEGER,  ******
+"viaAdministracion" TEXT,
+"adherenciaEstimada" REAL, 
+"observacion" TEXT,
+PRIMARY KEY (tratamientoID,empadronamiento,numeroVisita,codeTratamiento)
+)
+
+CREATE TABLE "code_tratamientos" (
+"codeTratamiento" INTEGER, 
+"nombreTratamiento" TEXT, 
+"droga" TEXT,
+PRIMARY KEY (codeTratamiento)
+);
+
+
+CREATE TABLE "comorbilidades" (
+"comorbilidadID" INTEGER NOT NULL,
+"empadronamiento" TEXT NOT NULL,
+"numeroVisita" INTEGER NOT NULL,
+"codeComorbilidad" INTEGER NOT NULL,
+"observacion" TEXT,
+PRIMARY KEY (comorbilidadID,empadronamiento,numeroVisita,codeComorbilidad)
+)
+
+CREATE TABLE "code_comorbilidades" (
+"codeComorbilidad" INTEGER, 
+"nombreComorbilidad" TEXT, 
+PRIMARY KEY (codeComorbilidad)
+);
+
+
+CREATE TABLE "code_familia" (
+"codeFamilia" INTEGER, 
+"familiar" TEXT, 
+PRIMARY KEY (codeFamilia)
+);
+
+
+CREATE TABLE "indicaciones" (
+"indicacionID" INTEGER NOT NULL,
+"empadronamiento" TEXT NOT NULL,
+"numeroVisita" INTEGER NOT NULL,
+"codeIndicacion" INTEGER NOT NULL,
+"observacion" TEXT,
+PRIMARY KEY (indicacionID,empadronamiento,numeroVisita,codeIndicacion)
+)
+
+CREATE TABLE "code_sintomas" (
+"codeIndicacion" INTEGER, 
+"nombreIndicacion" TEXT, 
+PRIMARY KEY (codeSintoma)
+);
+
+
+
+#########################################
+
+CREATE TABLE "visitas" (
+"empadronamiento" TEXT NOT NULL,
+"numeroVisita" INTEGER,
+"fechaVisita" TEXT,
+PRIMARY KEY (empadronamiento)
+);
+
+
+
+CREATE TABLE "EfectosAdversos" (
+"empadronamiento" TEXT NOT NULL,
+"tratamientoID" INTEGER NOT NULL.
+"fechaInicioEA" TEXT,
+"fechaFinEA" TEXT,
+"observacion" TEXT,
+PRIMARY KEY (empadronamiento,tratamientoID)
+);
+
+
+
