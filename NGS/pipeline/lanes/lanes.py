@@ -25,15 +25,7 @@ def recursive_glob(treeroot, pattern):
         results.extend(os.path.join(base, f) for f in goodfiles)
     return results
 
-if __name__ == '__main__':
-    args = parseargs()
-    fastq_folder, sep = args.fastq_folder,args.sep
-    files = glob.glob(fastq_folder+'*')
-    samplenames = get_samplenames()
-    outputfolder = '%slanes_samplepath/'%fastq_folder
-    if not os.path.exists(outputfolder):
-        os.mkdir(outputfolder)        
-
+def look_for_sample_paths_and_write_to_disk(samplenames):
     for sample in samplenames:
         r1 = recursive_glob(treeroot= fastq_folder, pattern='%s*R1*gz'%sample)
         r2 = recursive_glob(treeroot= fastq_folder, pattern='%s*R2*gz'%sample)
@@ -45,5 +37,20 @@ if __name__ == '__main__':
             for line in r2:
                 fr2.write(line+'\n')
         fr2.close()
+
+
+
+if __name__ == '__main__':
+    args = parseargs()
+    fastq_folder, sep = args.fastq_folder,args.sep
+    files = glob.glob(fastq_folder+'*')
+    samplenames = get_samplenames()
+
+    outputfolder = '%slanes_samplepath/'%fastq_folder
+    if not os.path.exists(outputfolder):
+        os.mkdir(outputfolder)        
+
+    look_for_sample_paths_and_write_to_disk(samplenames)
+    print 'output is located in the path: \n %s'%outputfolder 
             
         
