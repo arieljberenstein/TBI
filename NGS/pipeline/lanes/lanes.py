@@ -56,6 +56,7 @@ if __name__ == '__main__':
     files = glob.glob(fastq_folder+'*')
     samplenames = get_samplenames(files)
     
+    print 'uncompressing files'
     uncompressed = uncompress_gz(fastq_extension)
 
     outputfolder = '%slanes_samplepath/'%fastq_folder
