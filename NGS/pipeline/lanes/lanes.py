@@ -27,8 +27,8 @@ def recursive_glob(treeroot, pattern):
 
 def look_for_sample_paths_and_write_to_disk(samplenames):
     for sample in samplenames:
-        r1 = recursive_glob(treeroot= fastq_folder, pattern='%s*R1*gz'%sample)
-        r2 = recursive_glob(treeroot= fastq_folder, pattern='%s*R2*gz'%sample)
+        r1 = recursive_glob(treeroot= fastq_folder, pattern='%s*R1*fq'%sample)
+        r2 = recursive_glob(treeroot= fastq_folder, pattern='%s*R2*fq'%sample)
         with open(outputfolder+sample+'_R1.txt','wb') as fr1:
             for line in r1:
                 fr1.write(line+'\n')
