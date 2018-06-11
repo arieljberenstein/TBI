@@ -58,6 +58,8 @@ if __name__ == '__main__':
     
     print 'uncompressing files'
     uncompressed = uncompress_gz(fastq_extension)
+    print 'files uncompressed'
+
 
     outputfolder = '%slanes_samplepath/'%fastq_folder
     if not os.path.exists(outputfolder):
