@@ -3,6 +3,8 @@ import glob
 import argparse
 import fnmatch
 import subprocess 
+pipeline_path =  '~/repos/TBI/NGS/pipeline/lanes/wesPipeline_lanes_hnrgAddapted.bash' ## hardcoded!! 
+
 
 def parseargs():
     parser = argparse.ArgumentParser(description='generate lane file paths by sample')
@@ -54,7 +56,7 @@ def uncompress_gz(fastq_extension):
     return(uncompressed)
 
 
-def create_pipeline_run(results_folder ,sample,fileR1, fileR2, pipeline_path = '~/repos/TBI/NGS/pipeine/lanes/wesPipeline_lanes_hnrgAddapted.bash', domain = 61, bed_option = 26):
+def create_pipeline_run(results_folder ,sample,fileR1, fileR2, pipeline_path = pipeline_path , domain = 61, bed_option = 26):
     dom = 'domain=%s'%domain
     bed = 'bed=%s'%bed_option
     if not os.path.exists(results_folder):
@@ -75,7 +77,7 @@ if __name__ == '__main__':
         print 'files uncompressed'
 
 
-    outputfolder = '%slanes_samplepath/'%fastq_folder
+    outputfolder = '%slanes_samplepath/'%pipeline_output_folder
     if not os.path.exists(outputfolder):
         os.mkdir(outputfolder)        
 
