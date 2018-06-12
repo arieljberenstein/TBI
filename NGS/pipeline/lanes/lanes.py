@@ -55,12 +55,11 @@ def uncompress_gz(fastq_extension):
 
 
 def create_pipeline_run(results_folder ,sample,fileR1, fileR2, pipeline_path = '~/repos/TBI/NGS/pipeine/lanes/wesPipeline_lanes_hnrgAddapted.bash', domain = 61, bed_option = 26):
-    l = []
     dom = 'domain=%s'%domain
     bed = 'bed=%s'%bed_option
     if not os.path.exists(results_folder):
         os.mkdir(results_folder)        
-    l.append(' '.join([pipeline_path,'d',sample,fileR1,fileR2,results_folder,dom,bed])+ '\n')
+    l = ' '.join([pipeline_path,'d',sample,fileR1,fileR2,results_folder,dom,bed])+ '\n'
     return(l)
 
 if __name__ == '__main__':
@@ -91,6 +90,7 @@ if __name__ == '__main__':
             pipeline_output_folder = outputfolder
         to_run_pipeline.append(create_pipeline_run(results_folder = pipeline_output_folder ,sample = l['sample'], fileR1=l['fileR1'], fileR2=l['fileR2']))
     ofile = outputfolder + 'to_run_pipeline.sh'
+    
     with open(ofile,'wb') as fo:
         fo.write('#!/bin/bash \n' )
         for line in to_run_pipeline:
