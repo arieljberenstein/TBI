@@ -33,13 +33,13 @@ def look_for_sample_paths_and_write_to_disk(samplenames,fastq_extension):
     for sample in samplenames:
         r1 = recursive_glob(treeroot= fastq_folder, pattern='%s*R1*%s'%(sample,fastq_extension))
         r2 = recursive_glob(treeroot= fastq_folder, pattern='%s*R2*%s'%(sample,fastq_extension))
-        file1 = outputfolder+sample+'_R1.txt','wb'
-        with open(file1) as fr1:
+        file1 = outputfolder+sample+'_R1.txt'
+        with open(file1,'wb') as fr1:
             for line in r1:
                 fr1.write(line+'\n')
         fr1.close()        
-        file2 = outputfolder+sample+'_R2.txt','wb'
-        with open(file2) as fr2:
+        file2 = outputfolder+sample+'_R2.txt'
+        with open(file2,'wb') as fr2:
             for line in r2:
                 fr2.write(line+'\n')
         fr2.close()
@@ -56,7 +56,7 @@ def uncompress_gz(fastq_extension):
 
 def create_pipeline_run(results_folder ,sample,fileR1, fileR2, pipeline_path = '~/repos/TBI/NGS/pipeine/lanes/wesPipeline_lanes_hnrgAddapted.bash', domain = 61, bed_option = 26):
     l = []
-    dom = 'domain=%s'domain
+    dom = 'domain=%s'%domain
     bed = 'bed=%s'%bed_option
     if not os.path.exists(results_folder):
         os.mkdir(results_folder)        
@@ -82,18 +82,29 @@ if __name__ == '__main__':
 
     
     list_of_paths = look_for_sample_paths_and_write_to_disk(samplenames,fastq_extension) # esta lista contiene 
+    
+    ###################################
+    ## genero file for running pipeline
+    to_run_pipeline = []
     for l in list_of_paths:
         if pipeline_output_folder == './':
             pipeline_output_folder = outputfolder
-        create_pipeline_run(results_folder = pipeline_output_folder ,sample = l['sample'], fileR1=l['fileR1'], fileR2=l['flieR2'])
+        to_run_pipeline.append(create_pipeline_run(results_folder = pipeline_output_folder ,sample = l['sample'], fileR1=l['fileR1'], fileR2=l['fileR2']))
+    ofile = outputfolder + 'to_run_pipeline.sh'
+    with open(ofile,'wb') as fo:
+        fo.write('#!/bin/bash \n' )
+        for line in to_run_pipeline:
+            fo.write(line)
+    fo.close()
+    ###################################
 
+    if uncompress:
+        ## gaurdo nombres de archivos descomprimidos para despues de correr el pipeline borrarlos y liberar espacio.
+        with open(outputfolder+'uncompressed_files.txt','wb') as f:
+            for line in uncompressed:
+                f.write(line +'\n')
+        f.close()
 
-    
-    ## gaurdo nombres de archivos descomprimidos para despues de correr el pipeline borrarlos y liberar espacio.
-    with open(outputfolder+'uncompressed_files.txt','wb') as f:
-        for line in uncompressed:
-            f.write(line +'\n')
-    f.close()
         
     print 'output is located in the path: \n %s'%outputfolder 
             
