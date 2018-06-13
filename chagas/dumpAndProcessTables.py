@@ -88,7 +88,7 @@ def JoinSerotipeTables(dump_path):
     subprocess.call(['rm',sero2])
 
 def get_codefiles(dump_path):
-    codefiles = glob(dump_path+'*[{c,C}]ode*csv')
+    codefiles = glob.glob(dump_path+'*[{c,C}]ode*csv')
     codepath = dump_path+'codefiles/'
     if not os.path.exists(codepath):
         os.mkdir(codepath)
@@ -177,11 +177,9 @@ def parse_raw_data(tablename, tablefile,proc_path):
                 
     'Parasitemia': ['FechaPar', 'Mh', 'Pcr', 'Xeno', 'IRL', 'Hemoc','Parasit','Tecnica'], 
 
-    'Serologia': ['Serologia', 'Elisa', 'TitElisa', 'Hai', 'TituloHai', 'AD',
+    'Serologias': ['Serologia', 'Elisa', 'TitElisa', 'Hai', 'TituloHai', 'AD',
                 'TitAD', 'AP', 'TitAP', 'F23', 'TitF23', 'Antiidiotipo'],
             
-    'Serologia_joined': ['Serologia', 'Elisa', 'TitElisa', 'Hai', 'TituloHai', 'AD',
-                        'TitAD', 'AP', 'TitAP', 'F23', 'TitF23', 'Antiidiotipo'],
     }
     data = load_data(tablefile)    
     column_clases = col_dict[tablename]
@@ -194,16 +192,17 @@ def parse_raw_data(tablename, tablefile,proc_path):
 
 #this function requiere parse_raw_data function
 def process_tables(dump_path,proc_path):
-    tables = ['Serologia_joined','Laboratorio','Clinica','EvAdversos','Parasitemia','Cardio','Demografico','Pacientes','Tratamiento']
+    tables = ['Serologias','Laboratorio','Clinica','EvAdversos','Parasitemia','Cardio','Demografico','Pacientes','Tratamiento']
     tables_pass_true = ['Demografico','Tratamiento','Pacientes']
 
     for tablename in tables:
+        
         tablefile = dump_path + tablename + '.csv'
         output_table_file = proc_path + tablename + '.csv'
         
         if tablename not in tables_pass_true:
             #os.system('python /home/ariel/Projects/Gutierrez/chagas/dropbox_folder/src/parse_raw_data.py -i %s -o %s -t %s'%(inputf,opath,t))
-            processedtable = parse_raw_data(tablename = tablename,tablefile = tablefile)
+            processedtable = parse_raw_data(tablename = tablename,tablefile = tablefile,proc_path = proc_path)
             processedtable.to_csv(output_table_file,sep = '|',encoding='utf-8')
         else:
             df = pd.read_csv(tablefile)
@@ -234,7 +233,7 @@ if __name__ == '__main__' :
     #code_files: detect and save:
     codefiles = get_codefiles(dump_path)
     
-    process_tables(tables,tables_pass_true,proc_path)
+    process_tables(dump_path,proc_path)
     
 
     #python transformDB.py # este file llama a parse_raw_data.py que es el que tiene la papota, cualquier ascepcion de procesamiento debe modificarse en 'parse_raw_data.py'
