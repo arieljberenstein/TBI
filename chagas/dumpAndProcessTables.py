@@ -185,35 +185,59 @@ def parse_raw_data(tablename, tablefile,proc_path):
     column_clases = col_dict[tablename]
     n_visita = get_visitas(data,tablename,column_clases)
     longtable = broad_to_long(data,column_clases,n_visita,dropna = True)
-    return longtable 
+    
+    return longtable
 
 
 
 
 #this function requiere parse_raw_data function
 def process_tables(dump_path,proc_path):
+    results = {}
     tables = ['Serologias','Laboratorio','Clinica','EvAdversos','Parasitemia','Cardio','Demografico','Pacientes','Tratamiento']
     tables_pass_true = ['Demografico','Tratamiento','Pacientes']
 
     for tablename in tables:
-        
         tablefile = dump_path + tablename + '.csv'
-        output_table_file = proc_path + tablename + '.csv'
-        
         if tablename not in tables_pass_true:
-            #os.system('python /home/ariel/Projects/Gutierrez/chagas/dropbox_folder/src/parse_raw_data.py -i %s -o %s -t %s'%(inputf,opath,t))
             processedtable = parse_raw_data(tablename = tablename,tablefile = tablefile,proc_path = proc_path)
-            processedtable.to_csv(output_table_file,sep = '|',encoding='utf-8')
+            processedtable.reset_index(inplace = True)
+            results.update({tablename:processedtable})
+        
         else:
-            df = pd.read_csv(tablefile)
-            df.to_csv(output_table_file,sep="|",index = False)
+            processedtable = pd.read_csv(tablefile)
+            results.update({tablename:processedtable})
+            results.update({tablename:processedtable})
+    return results
     
-#def get_tablefiles(dump_path):
-#    codefiles = glob(dump_path+'*[{c,C}]ode*csv')
-#    tf = glob(dump_path+'*csv')
-#    tablefiles = [t for t in tf if tf not in codefiles]    
-#    return tablefiles
+################## WORK HERE!! ######################    
+# input table in dataframe format previously preprocessed, i.e in "longformat" having a "numero_visita" column    
+def postprocessing(tablename,longtable):
+    if tablename == 'Parasitemia':
+        longtable.Tecnica.replace({'PCR':'Pcr'},inplace = True)
+        dumm = pd.get_dummies(longtable,columns=['Tecnica'])
+        dumm.Xeno.fillna(0,inplace = True) # esto para poder sumar luego 
+        dumm.Pcr.fillna(0,inplace = True)
+        
+        aux_Pcr = dumm.Parasit * dumm.Tecnica_Pcr
+        aux_Xeno = dumm.Parasit * dumm.Tecnica_Xeno
+        aux_Pcr.fillna(0,inplace = True)
+        aux_Xeno.fillna(0,inplace = True)
 
+        dumm['Pcr'] = dumm.Pcr + aux_Pcr
+        dumm['Xeno'] = dumm.Xeno + aux_Xeno
+        dumm['Tecnica'] = longtable.Tecnica
+        dumm.drop(['Tecnica_Pcr','Tecnica_Xeno'],axis = 1,inplace = True)
+        postprocessed = dumm.copy()
+        return postprocessed
+    else:
+        return longtable 
+
+
+def savetable(tablename, table, proc_path):
+    tablefile = dump_path + tablename + '.csv'
+    output_table_file = proc_path + tablename + '.csv'
+    table.to_csv(output_table_file,sep = '|',encoding='utf-8',index = False)    
 
 
 if __name__ == '__main__' : 
@@ -233,10 +257,18 @@ if __name__ == '__main__' :
     #code_files: detect and save:
     codefiles = get_codefiles(dump_path)
     
-    process_tables(dump_path,proc_path)
+    processedtables = process_tables(dump_path,proc_path)  #return a dictionary with tables
+    
+        
+    
+    ## save each table in a different file
+    for tablename in processedtables.keys():
+        table = processedtables[tablename]
+        final_table = postprocessing(tablename,longtable=table)
+        savetable(tablename, final_table, proc_path)    
+    
     
 
-    #python transformDB.py # este file llama a parse_raw_data.py que es el que tiene la papota, cualquier ascepcion de procesamiento debe modificarse en 'parse_raw_data.py'
 
 
 
