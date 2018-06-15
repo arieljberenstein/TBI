@@ -3,7 +3,7 @@ import argparse
 import sys, subprocess, os
 import pandas as pd
 import glob
-
+import datetime
 
 
 def get_args():
@@ -55,6 +55,14 @@ def DumpDb(imput_db,dump_path):
 
     #os.system('for x in `mdb-tables -1 %s`; do mdb-export %s $x >> %s.$x.csv ; done'%(input_db,input_db,dump_path))
     #os.system('mv %s.sqlite %s'%(input_db,dump_path))
+
+def print_date(opath):
+    now = datetime.datetime.now()
+    nowstr = now.strftime("%Y-%m-%d %H:%M")
+    with open(opath+'LastUpdate','wb') as f:
+        f.write('last update: '+nowstr + '\n')
+    f.close()
+
 
 
 
@@ -243,8 +251,8 @@ def savetable(tablename, table, proc_path):
 if __name__ == '__main__' : 
     args = get_args()
     input_db, opath = args.input_db, args.opath
-
     dump_path,proc_path =  create_output_dirs(opath)
+    print_date(opath) # documment running date.
     
     #this function dump the entire db in sql script and tablee by table in csv format
     #the output is downstream opath, in dump folder
@@ -259,8 +267,7 @@ if __name__ == '__main__' :
     
     processedtables = process_tables(dump_path,proc_path)  #return a dictionary with tables
     
-        
-    
+            
     ## save each table in a different file
     for tablename in processedtables.keys():
         table = processedtables[tablename]
