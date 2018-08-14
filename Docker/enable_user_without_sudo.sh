@@ -2,5 +2,5 @@
 ## enable it without sudo
 sudo groupadd docker
 sudo gpasswd -a $USER docker
-newgrp dockerTest
+sudo newgrp dockerTest
 docker run hello-world
